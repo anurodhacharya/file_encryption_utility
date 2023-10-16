@@ -23,10 +23,6 @@ class Encryption:
             This function will generate a random number for kdf_value.
         update_password_feedback(*args):
             This function will capture the password value enter in the GUI provide a message to user based on the password received.
-        encrypt(self, data, algorithm, hmac_key, encryption_key, kdf_iter, salt)::
-            This function will perform the encryption of the selected file.
-        encrypt_controller(self):
-            This function is responsible for handing the encryption process i.e. it orchestrates the flow of encryption.
     """
     def select_file(self):
         """
@@ -86,3 +82,74 @@ class Encryption:
             password_feedback_label.config(text="Enter stronger password", fg="red")
         else:
             password_feedback_label.config(text="Valid Password", fg="green")
+
+    def encrypt(self, data, algorithm, hmac_key, encryption_key, kdf_iter, salt):
+        """
+        Performs the encryption operation.
+
+        Args:
+            data: The content that is to be encrypted.
+            algorithm: The algorithm that needs to be used for encryption.
+            hmac_key: The hmac key that needs to be used for encryption.
+            kdf_iter: The number of kdf iterations that needs to be used.
+            salt: The salt that needs to be used.
+        
+        Returns:
+            bytes: Series of bytes containing encrypted data and metadata.
+        """
+        self.data = data
+        self.algorithm = algorithm
+        self.hmac_key = hmac_key
+        self.enc_key = encryption_key
+        self.kdf_iter = kdf_iter
+        self.salt = salt
+
+        block_size = 8 if self.algorithm == '3DES' else 16
+        iv = os.urandom(block_size)
+        
+        if algorithm == '3DES':
+            encryption_key = encryption_key[:24]
+            cipher = DES3.new(encryption_key, DES3.MODE_CBC, iv)
+        elif algorithm == 'AES128':
+            encryption_key = encryption_key[:16]
+            cipher = AES.new(encryption_key, AES.MODE_CBC, iv)
+        elif algorithm == 'AES256':
+            encryption_key = encryption_key[:32]
+            cipher = AES.new(encryption_key, AES.MODE_CBC, iv)
+        else:
+            raise ValueError('Invalid algorithm')
+
+        # padding data to a multiple of block size
+        data += (block_size - len(data) % block_size) * bytes([block_size - len(data) % block_size])
+
+        # Try encrypting the data else throw an exception.
+        try:
+            encrypted_data = cipher.encrypt(bytes(data))
+        except Exception as e:
+            error_label.config(text="Encryption failed", fg="yellow", bg="gray")
+            raise exceptions.EncryptionError("Encryption failed: " + str(e))
+
+        key_info = KeyInfo()
+
+        # Get the encryption and hashing algorithm 
+        chosen_hash_algo = hashing_algo_combo.get()
+        chosen_encryption_algo = encryption_algo_combo.get()
+
+        __, hmac_hash_module = key_info.key_hash(chosen_hash_algo)
+
+        # Compute the hmac
+        hmac_val = hmac.new(self.hmac_key, iv + encrypted_data, hmac_hash_module).digest()
+        salt_base64 = self.salt.hex()
+
+        # Put the metadata in dictionary.
+        info_to_decrypt = {
+            "enc_algo": chosen_encryption_algo,
+            "hash_algo": chosen_hash_algo,
+            "kdf_iter": self.kdf_iter,
+            "salt": salt_base64
+        }
+        info_bytes = json.dumps(info_to_decrypt).encode('utf-8')
+        concatenated_bytes = encrypted_data + iv + hmac_val + info_bytes + len(info_bytes).to_bytes(2, byteorder='big')
+    
+        # Return the encrypted data with iv, hmac, metadata
+        return concatenated_bytes
