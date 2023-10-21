@@ -153,3 +153,33 @@ class Encryption:
     
         # Return the encrypted data with iv, hmac, metadata
         return concatenated_bytes
+    
+    def encrypt_controller(self):
+        """
+        Orchestrates the encryption operation.
+        """
+        filename, contents = self.read_file_contents()
+        salt = self.salt_gen()
+        kdf_iter = self.kdf_val_gen()
+        password = encrypt_password_entry.get()
+        user_input_validator = UserInputValidation()
+
+        key_info = KeyInfo()
+        
+        # Obtain the encryption and hashing algorithm chosen by the user.
+        chosen_encryption_algo = encryption_algo_combo.get()
+        chosen_hash_algo = hashing_algo_combo.get()
+
+        if(user_input_validator.is_password_valid(password)):
+            # Perform benchmark testing with different iterations.
+            # key_info.benchmark(chosen_hash_algo, password, salt)
+
+            enc_key, hmac_key = key_info.derive_keys(chosen_encryption_algo, chosen_hash_algo, password, kdf_iter, salt)
+            enc_data = self.encrypt(contents, chosen_encryption_algo, hmac_key, enc_key, kdf_iter, salt)
+            
+            # Write the encrypted data in '.enc' format.
+            filename = filename + '.enc'
+            f = open(filename, 'wb')
+            f.write(enc_data)
+            f.close()
+            encrypt_label.config(text=f"File encrypted and saved to:\n{os.path.abspath(filename)}", fg="yellow", bg="gray")
