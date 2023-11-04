@@ -183,3 +183,56 @@ class Encryption:
             f.write(enc_data)
             f.close()
             encrypt_label.config(text=f"File encrypted and saved to:\n{os.path.abspath(filename)}", fg="yellow", bg="gray")
+
+
+class Decryption:
+    """
+    This class contains necessary decryption functions.
+
+    Methods:
+        display_open_file_decrypt(self):
+            This function is responsible for displaying the Choose File option in the GUI for performing decryption.
+        def read_decrypted_file_contents(self):
+            This function reads the .enc file which is in decrypted form and returns the name of the file and its contents.
+        extract_metadata_length(self, encrypted_data):
+            This function provides with the values needed to extract the metadata.
+        extract_encryption_metadata(self, encrypted_data, metadata_len, metadata_len_bytes_int):
+            This function extracts fields from the metadata that is needed during the decryption.
+        decrypt_data(self, encrypted_data, password):
+            This function performs the decryption operation.
+        output_decrypted_file(self, dec_data, filename):
+            This function outputs the file which is decrypted into its original format.
+        def clear_decrypted_textbox(self, dec_data):
+            This function is used to clear the decrypted textbox in the GUI on subsequent decryption operation.    
+    """
+    def display_open_file_decrypt(self):
+        """
+        Displays the user the option to select a file in GUI for decryption.
+        """
+        file_entry_decrypt.delete(0, tk.END)
+        filetypes = (('encrypted files', '*.enc'), ('All files', '*.*'))
+        initial_path = os.getcwd()
+        filename = fd.askopenfilename(title='Open a file', initialdir=initial_path, filetypes=filetypes)
+        file_entry_decrypt.insert(0, filename)
+    
+    def read_decrypted_file_contents(self):
+        """
+        Reads the content of file within '.enc' format.
+
+        Returns:
+            tuple: A tuple containing the name of the file and its contents to be decrypted.
+        """
+        filename = file_entry_decrypt.get()
+        user_input_validator = UserInputValidation()
+        try:
+            # Check if the file extension of the file to decrypt is in '.enc' format.
+            if(user_input_validator.is_decrypt_file_extension_valid(filename)):
+                with open(filename, 'rb') as f:
+                    contents = f.read()
+                    return filename, contents
+        except exceptions.InvalidFileExtensionError as e:
+            file_label_decrypt.config(text=str(e), fg="red")
+            raise
+        except FileNotFoundError:
+            file_label_decrypt.config(text="File not found!", fg="red")
+            raise
