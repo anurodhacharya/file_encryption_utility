@@ -236,3 +236,26 @@ class Decryption:
         except FileNotFoundError:
             file_label_decrypt.config(text="File not found!", fg="red")
             raise
+
+    def extract_metadata_values(self, encrypted_data):
+        """
+        Calculates the values for metadata field extraction
+
+        Args:
+            encrypted_data: Data that is read from the encrypted file.
+        
+        Returns:
+            tuple: A tuple containing the length of the in both byte string and integer format.
+        """
+        # Extracts last two bytes of encrypted data
+        self.metadata_bytes = encrypted_data[len(encrypted_data) - 2 : len(encrypted_data)]
+
+        # Converts metadata_len_bytes from byte string to integer value
+        self.metadata_len_int = int.from_bytes(self.metadata_bytes, 'big')
+
+        # Creates new byte string representing the length of metadata bytes.
+        self.metadata_len_bytes = len(self.metadata_bytes).to_bytes(2, byteorder='big')
+
+        # Converts metadata_bytes_int from byte string to integer.
+        self.metadata_len = int.from_bytes(self.metadata_len_bytes, 'big')
+        return self.metadata_len_int, self.metadata_len
