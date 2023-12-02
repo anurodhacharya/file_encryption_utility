@@ -259,3 +259,91 @@ class Decryption:
         # Converts metadata_bytes_int from byte string to integer.
         self.metadata_len = int.from_bytes(self.metadata_len_bytes, 'big')
         return self.metadata_len_int, self.metadata_len
+    
+    def extract_encryption_metadata(self, encrypted_data, metadata_len, metadata_len_bytes_int):
+        """
+        Extracts the values from the metadata present within the encrypted file.
+
+        Args:
+            encrypted_data: Data that is read from the encrypted file.
+            metadata_len: Total length of the metadata.
+            metadata_len_bytes_int: Total length of metadata .....
+        
+        Returns:
+            tuple: A tuple containing the encryption algorithm, hashing algorithm, kdf iteration and salt extracted from the metadata.
+        """
+        self.decoded_json = encrypted_data[-(metadata_len_bytes_int + metadata_len) : -metadata_len]
+        self.str_decoded_json = self.decoded_json.decode('utf-8')
+        self.regular_dict_decoded_json = json.loads(self.str_decoded_json)
+
+        # Values of metadata extracted from the encrypted file.
+        self.encryption_algo = self.regular_dict_decoded_json['enc_algo']
+        self.hash_algo = self.regular_dict_decoded_json['hash_algo']
+        self.kdf_iter = self.regular_dict_decoded_json['kdf_iter']
+        self.salt_base64 = self.regular_dict_decoded_json['salt']
+        self.salt = bytes.fromhex(self.salt_base64)
+        return self.encryption_algo, self.hash_algo, self.kdf_iter, self.salt
+
+    def decrypt_data(self, encrypted_data, password):
+        """
+        Performs the decryption operation.
+
+        Args:
+            encrypted_data: Data that is read from the encrypted file
+            password: Password entered by the user.
+        
+        Returns:
+                The contents of the file after decryption.
+        """
+        metadata_len_bytes_int, metadata_len = self.extract_metadata_values(encrypted_data)
+        encryption_algo, hashing_algo, kdf_iter, salt = self.extract_encryption_metadata(encrypted_data, metadata_len, metadata_len_bytes_int)
+        
+        key_info = KeyInfo()
+        __, hmac_hash_module = key_info.key_hash(hashing_algo)
+        hmac_size = hmac_hash_module.digest_size
+
+        # Derive encryption and hmac keys using the metadata extracted from the encrypted file.
+        enc_key, hmac_key =  key_info.derive_keys(encryption_algo, hashing_algo, password, kdf_iter, salt)
+
+        block_size = 8 if encryption_algo == '3DES' else 16
+
+        hmac_offset = len(encrypted_data) - metadata_len - metadata_len_bytes_int - hmac_size
+        iv = encrypted_data[hmac_offset-block_size:hmac_offset]
+
+        # Extract hmac and encrypted data.
+        extracted_hmac = encrypted_data[hmac_offset:hmac_offset+hmac_size]
+        encrypted_data = encrypted_data[:hmac_offset-block_size]
+
+        if encryption_algo == '3DES':
+            encryption_key = enc_key[:24]
+            cipher = DES3.new(encryption_key, DES3.MODE_CBC, iv)
+        elif encryption_algo == 'AES128':
+            encryption_key = enc_key[:16]
+            cipher = AES.new(encryption_key, AES.MODE_CBC, iv)
+        elif encryption_algo == 'AES256':
+            encryption_key = enc_key[:32]
+            cipher = AES.new(encryption_key, AES.MODE_CBC, iv)
+        else:
+            raise ValueError('Invalid algorithm')
+
+        # Computes the hmac
+        computed_hmac = hmac.new(hmac_key, iv + encrypted_data, hmac_hash_module).digest()
+
+        try:
+            # Compare the extracted hmac form the encrypted file with the computed hmac.
+            if extracted_hmac != computed_hmac:
+                raise ValueError('HMAC verification failed')
+        except Exception as e:
+            sad = "\U0001F61E"
+            print(e)
+            decrypted_label.config(text=f"File could not be decrypted {sad}", fg="red")
+            decrypted_text.delete(1.0, tk.END)
+            return False
+        else:
+            smiley = u"\u263A"
+            decrypted_label.config(text=f"Decrypted Contents: {smiley}", fg="purple", bg="lightgreen")
+            decrypted_data = cipher.decrypt(encrypted_data)
+            # remove the padding from the decrypted data
+            unpadder = padding.PKCS7(block_size * 8).unpadder()
+            decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
+            return decrypted_data
