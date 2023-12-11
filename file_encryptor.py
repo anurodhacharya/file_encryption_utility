@@ -347,3 +347,31 @@ class Decryption:
             unpadder = padding.PKCS7(block_size * 8).unpadder()
             decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
             return decrypted_data
+    
+    def output_decrypted_file(self, decrypted_data, filename):
+        """
+        This functions outputs the decrypted content into the appropriate original format.
+
+        Args:
+            decrypted_data: Content of decrypted data.
+            filename: Name of the file chosen for decryption.
+        """
+        self.filename = filename
+        self.dec_data = decrypted_data
+
+        # Base file name and extension of file extracted to match the original format.
+        base_name, __ = os.path.splitext(self.filename)
+        base_name2, extension2 = os.path.splitext(base_name)
+        new_filename = base_name2 + "_new" + extension2
+        with open(new_filename, 'wb') as f:
+            f.write(self.dec_data)
+
+    def clear_decrypted_textbox(self, decrypted_data):
+        """
+        Clears the decrypted content textbox field on subsequent decryption to avoid overwrite.
+
+        Args:
+            decrypted_data: Content of decrypted data.
+        """
+        decrypted_text.delete(1.0, tk.END) 
+        decrypted_text.insert(tk.END, decrypted_data)
