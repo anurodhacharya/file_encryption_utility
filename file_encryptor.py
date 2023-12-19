@@ -390,6 +390,15 @@ class Decryption:
             self.output_decrypted_file(dec_data, filename)
 
 class Dropdown:
+    """
+    Provides functionality to display and remove message dynamically in the program.
+
+    Methods:
+        dynamic_encryption_algo_message(self, event):
+            Checks and removes the message on encryption algorithm selection.
+        dynamic_hashing_algo_message(self, event):
+            Checks and removes the message on hashing algorithm selection.
+    """
     def dynamic_encryption_algo_message(self, event):
         """
         Dynamically removes the message on user encryption algorithm input.
