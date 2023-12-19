@@ -388,3 +388,11 @@ class Decryption:
             dec_data = self.decrypt_data(contents, password)
             self.clear_decrypted_textbox(dec_data)
             self.output_decrypted_file(dec_data, filename)
+
+class Dropdown:
+    def dynamic_encryption_algo_message(self, event):
+        chosen_encryption_algo = encryption_algo_combo.get()
+        if chosen_encryption_algo:
+            display_choose_algo_message.set("")
+        else:
+            display_choose_algo_message.set("Please choose an encryption algorithm")
