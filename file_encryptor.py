@@ -391,6 +391,9 @@ class Decryption:
 
 class Dropdown:
     def dynamic_encryption_algo_message(self, event):
+        """
+        Dynamically removes the message on user encryption algorithm input.
+        """
         chosen_encryption_algo = encryption_algo_combo.get()
         if chosen_encryption_algo:
             display_choose_algo_message.set("")
