@@ -375,3 +375,16 @@ class Decryption:
         """
         decrypted_text.delete(1.0, tk.END) 
         decrypted_text.insert(tk.END, decrypted_data)
+    
+    def decrypt_controller(self):
+        """
+        Orchestrates the decryption process.
+        """
+        filename, contents = self.read_decrypted_file_contents()
+
+        # Obtain the password entered by user to decrypt the file.
+        password = decrypt_password_entry.get()
+        if(self.decrypt_data(contents, password)):
+            dec_data = self.decrypt_data(contents, password)
+            self.clear_decrypted_textbox(dec_data)
+            self.output_decrypted_file(dec_data, filename)
