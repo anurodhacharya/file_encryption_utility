@@ -408,3 +408,30 @@ class Dropdown:
             display_choose_algo_message.set("")
         else:
             display_choose_algo_message.set("Please choose an encryption algorithm")
+    
+    def dynamic_hashing_algo_message(self, event):
+        chosen_hash_algo = hashing_algo_combo.get()
+        if chosen_hash_algo:
+            display_choose_hash_message.set("")
+        else:
+            display_choose_hash_message.set("Please choose a hashing algorithm")
+
+
+root = tk.Tk()
+root.title("File Encryptor")
+root.geometry("1000x480")
+
+custom_font = ("Arial", 14)
+
+# ---------------------------------LEFT FRAME---------------------------------
+# create a frame on the left side for encryption operations.
+left_frame = tk.Frame(root, width=500, height=300, bg="lightblue")
+left_frame.grid(row=0, column=0, sticky="nsew")
+
+# Label on top of left frame showing "Encryption" at the top
+encryption_label = tk.Label(left_frame, text="Encryption", font=("Arial", 20), bg="lightblue")
+encryption_label.pack(pady=10)
+
+# Label dislaying the user to enter the path of the file for decryption
+file_label_encrypt = tk.Label(left_frame, text="Enter the file path you want to encrypt", fg="blue", bg="lightblue")
+file_label_encrypt.pack(pady=5)
