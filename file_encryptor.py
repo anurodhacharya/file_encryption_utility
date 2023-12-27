@@ -410,6 +410,9 @@ class Dropdown:
             display_choose_algo_message.set("Please choose an encryption algorithm")
     
     def dynamic_hashing_algo_message(self, event):
+        """
+        Dynamically removes the message on user hashing algorithm input.
+        """
         chosen_hash_algo = hashing_algo_combo.get()
         if chosen_hash_algo:
             display_choose_hash_message.set("")
@@ -435,3 +438,7 @@ encryption_label.pack(pady=10)
 # Label dislaying the user to enter the path of the file for decryption
 file_label_encrypt = tk.Label(left_frame, text="Enter the file path you want to encrypt", fg="blue", bg="lightblue")
 file_label_encrypt.pack(pady=5)
+
+# Entry textbox to enter the path of the file to encrypt.
+file_entry_encrypt = tk.Entry(left_frame, width=80)
+file_entry_encrypt.pack(pady=5)
