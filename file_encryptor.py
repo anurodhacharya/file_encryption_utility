@@ -442,3 +442,48 @@ file_label_encrypt.pack(pady=5)
 # Entry textbox to enter the path of the file to encrypt.
 file_entry_encrypt = tk.Entry(left_frame, width=80)
 file_entry_encrypt.pack(pady=5)
+
+# Encrypt button for GUI based file selection for encryption.
+encrypt = Encryption()
+encrypt_file_button = tk.Button(left_frame, text="Choose File", command=lambda: encrypt.select_file())
+encrypt_file_button.pack(pady=5)
+
+# Create a new frame to group the label and the combobox together
+
+# Message to the user to choose an encryption algorithm to be used for encryption.
+display_choose_algo_message = tk.StringVar()
+display_choose_algo_message.set("Please choose an encryption algorithm")
+algo_message_label = tk.Label(left_frame, textvariable=display_choose_algo_message, bg="lightblue", fg="purple")
+algo_message_label.pack(pady=5)
+
+encryption_algo_frame = tk.Frame(left_frame, bg="lightblue")
+encryption_algo_frame.pack(padx=5)
+
+# Label used for displaying Encryption Algorithm in the display.
+encryption_algo_label = tk.Label(encryption_algo_frame, text="Encryption Algorithm", bg="lightblue")
+encryption_algo_label.pack(side=tk.LEFT, padx=5)
+
+# Combobox showing different value options for encryption algorithm.
+dropdown = Dropdown()
+encryption_algo_combo = ttk.Combobox(encryption_algo_frame, values=("AES128", "AES256", "3DES"))
+encryption_algo_combo.pack(side=tk.LEFT, padx=5)
+encryption_algo_combo.bind("<<ComboboxSelected>>", dropdown.dynamic_encryption_algo_message)
+
+# Message to the user to choose an hashing algorithm.
+display_choose_hash_message = tk.StringVar()
+display_choose_hash_message.set("Please choose a hashing algorithm")
+hash_message_label = tk.Label(left_frame, textvariable=display_choose_hash_message, bg="lightblue", fg="purple")
+hash_message_label.pack(pady=5)
+
+hashing_algo_frame = tk.Frame(left_frame, bg="lightblue")
+hashing_algo_frame.pack(pady=5)
+
+# Label used for displaying Hashing Algorithm in the display.
+hashing_algo_label = tk.Label(hashing_algo_frame, text="Hashing Algorithm", bg="lightblue")
+hashing_algo_label.pack(side=tk.LEFT, pady=5)
+
+# Combobox showing different value options for hashing algorithm.
+dropdown = Dropdown()
+hashing_algo_combo = ttk.Combobox(hashing_algo_frame, values=("SHA256", "SHA512"))
+hashing_algo_combo.pack(side=tk.LEFT, pady=5)
+hashing_algo_combo.bind("<<ComboboxSelected>>", dropdown.dynamic_hashing_algo_message)
