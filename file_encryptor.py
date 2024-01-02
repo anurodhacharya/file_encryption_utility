@@ -487,3 +487,7 @@ dropdown = Dropdown()
 hashing_algo_combo = ttk.Combobox(hashing_algo_frame, values=("SHA256", "SHA512"))
 hashing_algo_combo.pack(side=tk.LEFT, pady=5)
 hashing_algo_combo.bind("<<ComboboxSelected>>", dropdown.dynamic_hashing_algo_message)
+
+# Adding the password label in left frame.
+password_label = tk.Label(left_frame, text="Password", bg="lightblue")
+password_label.pack(pady=5)
