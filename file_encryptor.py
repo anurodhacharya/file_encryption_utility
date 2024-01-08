@@ -491,3 +491,27 @@ hashing_algo_combo.bind("<<ComboboxSelected>>", dropdown.dynamic_hashing_algo_me
 # Adding the password label in left frame.
 password_label = tk.Label(left_frame, text="Password", bg="lightblue")
 password_label.pack(pady=5)
+
+# Fetches the user input and passed it to a function.
+update_password = Encryption()
+password_var = tk.StringVar()
+password_var.trace("w", update_password.update_password_feedback)
+
+# Entry box to enter the password for encryption.
+encrypt_password_entry = tk.Entry(left_frame, show="*", width=80, textvariable=password_var)
+encrypt_password_entry.pack(pady=5)
+
+# Label asking the user to enter the password.
+password_feedback_label = tk.Label(left_frame, text="Please enter your password", bg="lightblue", fg="red")
+password_feedback_label.pack(pady=5)
+
+# Button allowing user to encrypt their file.
+encrypt = Encryption()
+encrypt_button = tk.Button(left_frame, text="Encrypt", command=encrypt.encrypt_controller)
+encrypt_button.pack(pady=10)
+
+encrypt_label = tk.Label(left_frame, text="", fg='purple', bg="lightblue")
+encrypt_label.pack(pady=5)
+
+error_label = tk.Label(left_frame, text="", fg='purple', bg="lightblue")
+error_label.pack(pady=5)
