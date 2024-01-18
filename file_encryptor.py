@@ -6,7 +6,11 @@ import random                                           # For generating random 
 # Third-party imports                   
 from Crypto.Cipher import DES3, AES                     # For encryption and decryption operation
 from cryptography.hazmat.primitives import padding      # For cryptographic padding
+import hmac                                             # For generating keyed hashes
 import secrets                                          # For generating cryptographically secure random numbers
+import tkinter as tk                                    # For building GUI applications
+from tkinter import filedialog as fd                    # For opening file dialogs
+from tkinter import ttk                                 # For themed widgets
 
 class Encryption:
     """
@@ -515,3 +519,16 @@ encrypt_label.pack(pady=5)
 
 error_label = tk.Label(left_frame, text="", fg='purple', bg="lightblue")
 error_label.pack(pady=5)
+
+
+right_frame = tk.Frame(root, width=500, height=300, bg="lightgreen")
+right_frame.grid(row=0, column=1, sticky="nsew")
+
+decryption_label = tk.Label(right_frame, text="Decryption", font=("Arial", 20), bg="lightgreen")
+decryption_label.pack(pady=10)
+
+file_label_decrypt = tk.Label(right_frame, text="Enter the file path you want to decrypt", fg="blue", bg="lightgreen")
+file_label_decrypt.pack(pady=5)
+
+file_entry_decrypt = tk.Entry(right_frame, width=80)
+file_entry_decrypt.pack(pady=5)
