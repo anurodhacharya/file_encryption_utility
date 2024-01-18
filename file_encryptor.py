@@ -520,15 +520,19 @@ encrypt_label.pack(pady=5)
 error_label = tk.Label(left_frame, text="", fg='purple', bg="lightblue")
 error_label.pack(pady=5)
 
-
+#---------------------RIGHT-FRAME---------------------------------
+# create a frame on the right side for decryption operations.
 right_frame = tk.Frame(root, width=500, height=300, bg="lightgreen")
 right_frame.grid(row=0, column=1, sticky="nsew")
 
+# Label on top of left frame showing "Decryption" at the top
 decryption_label = tk.Label(right_frame, text="Decryption", font=("Arial", 20), bg="lightgreen")
 decryption_label.pack(pady=10)
 
+# Label dislaying the user to enter the path of the file for encryption
 file_label_decrypt = tk.Label(right_frame, text="Enter the file path you want to decrypt", fg="blue", bg="lightgreen")
 file_label_decrypt.pack(pady=5)
 
+# Entry textbox to enter the path of the file to decrypt.
 file_entry_decrypt = tk.Entry(right_frame, width=80)
 file_entry_decrypt.pack(pady=5)
