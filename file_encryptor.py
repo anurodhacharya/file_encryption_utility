@@ -536,3 +536,16 @@ file_label_decrypt.pack(pady=5)
 # Entry textbox to enter the path of the file to decrypt.
 file_entry_decrypt = tk.Entry(right_frame, width=80)
 file_entry_decrypt.pack(pady=5)
+
+# Decrypt button for GUI based file selection for decryption.
+decrypt = Decryption()
+decrypt_file_button = tk.Button(right_frame, text="Choose File", command=lambda: decrypt.display_open_file_decrypt())
+decrypt_file_button.pack(pady=5)
+
+# Adding the password label in right frame.
+decrypt_password_label = tk.Label(right_frame, text="Password", bg="lightgreen")
+decrypt_password_label.pack(pady=5)
+
+# Entry box to enter the password for decryption.
+decrypt_password_entry = tk.Entry(right_frame, show="*")
+decrypt_password_entry.pack(pady=5)
