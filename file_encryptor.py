@@ -549,3 +549,12 @@ decrypt_password_label.pack(pady=5)
 # Entry box to enter the password for decryption.
 decrypt_password_entry = tk.Entry(right_frame, show="*")
 decrypt_password_entry.pack(pady=5)
+
+# Button allowing user to decrypt their file.
+decrypt = Decryption()
+decrypt_button = tk.Button(right_frame, text="Decrypt", command=decrypt.decrypt_controller)
+decrypt_button.pack(pady=10)
+
+# Label for the decrypted contents
+decrypted_label = tk.Label(right_frame, text="Decrypted Contents will appear here:", fg="purple", bg="lightgreen")
+decrypted_label.pack(pady=5)
