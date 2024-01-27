@@ -558,3 +558,14 @@ decrypt_button.pack(pady=10)
 # Label for the decrypted contents
 decrypted_label = tk.Label(right_frame, text="Decrypted Contents will appear here:", fg="purple", bg="lightgreen")
 decrypted_label.pack(pady=5)
+
+decrypted_text = tk.Text(right_frame, wrap=tk.WORD, height=10, width=50, bd=2, relief=tk.GROOVE)
+
+# Scrollbar to the Text widget
+scrollbar = tk.Scrollbar(right_frame, command=decrypted_text.yview)
+decrypted_text.config(yscrollcommand=scrollbar.set)
+
+decrypted_text.pack(side=tk.LEFT, pady=10, padx=5)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=10, padx=5)
+
+root.mainloop()
